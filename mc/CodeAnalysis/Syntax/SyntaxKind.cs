@@ -26,6 +26,8 @@ namespace Minsk.CodeAnalysis.Syntax
         FalseKeyword,
         BangToken,
         AmpersandAmpersandToken,
-        PipePipeToken
+        PipePipeToken,
+        EqualsEqualsToken,
+        BangEqualsToken
     }
 }

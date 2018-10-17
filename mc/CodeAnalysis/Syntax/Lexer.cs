@@ -102,8 +102,6 @@ namespace Minsk.CodeAnalysis.Syntax
                     return new SyntaxToken(SyntaxKind.OpenParenthesisToken, position++, "(", null);
                 case ')':
                     return new SyntaxToken(SyntaxKind.CloseParenthesisToken, position++, ")", null);
-                case '!':
-                    return new SyntaxToken(SyntaxKind.BangToken, position++, "!", null);
                 case '&':
                     if (Lookahead == '&')
                         return new SyntaxToken(SyntaxKind.AmpersandAmpersandToken, position += 2, "&&", null);
@@ -112,6 +110,16 @@ namespace Minsk.CodeAnalysis.Syntax
                     if (Lookahead == '|')
                         return new SyntaxToken(SyntaxKind.PipePipeToken, position += 2, "||", null);
                     break;
+                    break;
+                case '=':
+                    if (Lookahead == '=')
+                        return new SyntaxToken(SyntaxKind.EqualsEqualsToken, position += 2, "==", null);
+                    break;
+                case '!':
+                    if (Lookahead == '=')
+                        return new SyntaxToken(SyntaxKind.BangEqualsToken, position += 2, "!=", null);
+                    else
+                        return new SyntaxToken(SyntaxKind.BangToken, position++, "!", null);
             }
 
             this.diagnostics.Add($"ERROR: bad character input: '{Current}'");
