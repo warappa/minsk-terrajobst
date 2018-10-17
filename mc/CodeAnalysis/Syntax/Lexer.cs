@@ -73,6 +73,20 @@ namespace Minsk.CodeAnalysis.Syntax
                 return new SyntaxToken(SyntaxKind.Whitespace, start, t, null);
             }
 
+            if (char.IsLetter(Current))
+            {
+                var start = position;
+                while (char.IsLetter(Current))
+                {
+                    Next();
+                }
+
+                var length = position - start;
+                var t = text.Substring(start, length);
+                var kind = SyntaxFacts.GetKeywordKind(t);
+                return new SyntaxToken(kind, start, t, null);
+            }
+
             switch (Current)
             {
                 case '+':

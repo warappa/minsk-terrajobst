@@ -13,20 +13,20 @@ namespace Minsk.CodeAnalysis
             this.root = root;
         }
 
-        public int Evaluate()
+        public object Evaluate()
         {
             return EvaluateExpression(root);
         }
 
-        private int EvaluateExpression(BoundExpression root)
+        private object EvaluateExpression(BoundExpression root)
         {
             if (root is BoundLiteralExpression literal)
             {
-                return (int)literal.Value;
+                return literal.Value;
             }
             if (root is BoundUnaryExpression unary)
             {
-                var operand = EvaluateExpression(unary.Operand);
+                var operand = (int)EvaluateExpression(unary.Operand);
 
                 switch (unary.OperatorKind)
                 {
@@ -41,8 +41,8 @@ namespace Minsk.CodeAnalysis
 
             if (root is BoundBinaryExpression binary)
             {
-                var left = EvaluateExpression(binary.Left);
-                var right = EvaluateExpression(binary.Right);
+                var left = (int)EvaluateExpression(binary.Left);
+                var right = (int)EvaluateExpression(binary.Right);
 
                 switch (binary.OperatorKind)
                 {
