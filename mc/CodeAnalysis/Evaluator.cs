@@ -22,6 +22,24 @@ namespace Minsk.CodeAnalysis
             {
                 return (int)literal.LiteralToken.Value;
             }
+            if (root is UnaryExpressionSyntax unary)
+            {
+                var operand = EvaluateExpression(unary.Operand);
+
+                if (unary.OperatorToken.Kind == SyntaxKind.PlusToken)
+                {
+                    return operand;
+                }
+                if (unary.OperatorToken.Kind == SyntaxKind.MinusToken)
+                {
+                    return -operand;
+                }
+                else
+                {
+                    throw new Exception($"Unexpected unary operator {unary.OperatorToken.Kind}");
+                }
+            }
+
             if (root is BinaryExpressionSyntax binary)
             {
                 var left = EvaluateExpression(binary.Left);

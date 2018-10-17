@@ -2,23 +2,6 @@ using System.Collections.Generic;
 
 namespace Minsk.CodeAnalysis
 {
-    internal static class SyntaxFacts
-    {
-        public static int GetBinaryOperatorPrecedence(this SyntaxKind kind)
-        {
-            switch (kind)
-            {
-                case SyntaxKind.StarToken:
-                case SyntaxKind.SlashToken:
-                    return 2;
-                case SyntaxKind.PlusToken:
-                case SyntaxKind.MinusToken:
-                    return 1;
-                default:
-                    return 0;
-            }
-        }
-    }
     internal sealed class Parser
     {
         private List<string> diagnostics = new List<string>();
@@ -89,8 +72,19 @@ namespace Minsk.CodeAnalysis
 
         private ExpressionSyntax ParseExpression(int parentPrecedence = 0)
         {
-            var left = ParsePrimaryExpression();
+            ExpressionSyntax left;
 
+            var unaryOperatorPrecendence = Current.Kind.GetUnaryOperatorPrecedence();
+            if (unaryOperatorPrecendence != 0 && unaryOperatorPrecendence >= parentPrecedence)
+            {
+                var operatorToken = NextToken();
+                var operand = ParseExpression(unaryOperatorPrecendence);
+                left = new UnaryExpressionSyntax(operatorToken, operand);
+            }
+            else
+            {
+                left = ParsePrimaryExpression();
+            }
             while (true)
             {
                 var precedence = Current.Kind.GetBinaryOperatorPrecedence();
