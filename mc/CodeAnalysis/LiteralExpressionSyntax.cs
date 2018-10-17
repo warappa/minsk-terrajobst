@@ -2,20 +2,20 @@ using System.Collections.Generic;
 
 namespace Minsk.CodeAnalysis
 {
-    sealed class NumberExpressionSyntax : ExpressionSyntax
+    public sealed class LiteralExpressionSyntax : ExpressionSyntax
     {
-        public NumberExpressionSyntax(SyntaxToken numberToken)
+        public LiteralExpressionSyntax(SyntaxToken literalToken)
         {
-            NumberToken = numberToken;
+            LiteralToken = literalToken;
         }
 
-        public SyntaxToken NumberToken { get; }
+        public SyntaxToken LiteralToken { get; }
 
         public override SyntaxKind Kind => SyntaxKind.NumberExpression;
 
         public override IEnumerable<SyntaxNode> GetChildren()
         {
-            yield return NumberToken;
+            yield return LiteralToken;
         }
     }
 }

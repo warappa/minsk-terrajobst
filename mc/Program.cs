@@ -5,12 +5,11 @@ using Minsk.CodeAnalysis;
 
 namespace Minsk
 {
-    class Program
+    internal static class Program
     {
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
-            var color = Console.ForegroundColor;
-            bool showTree = false;
+            var showTree = false;
 
             while (true)
             {
@@ -41,7 +40,7 @@ namespace Minsk
 
                     PrettyPrint(syntaxTree.Root);
 
-                    Console.ForegroundColor = color;
+                    Console.ResetColor();
                 }
 
                 if (syntaxTree.Diagnostics.Any())
@@ -53,7 +52,7 @@ namespace Minsk
                         Console.WriteLine(diagnostic);
                     }
 
-                    Console.ForegroundColor = color;
+                    Console.ResetColor();
                 }
                 else
                 {
@@ -61,22 +60,13 @@ namespace Minsk
                     var e = new Evaluator(syntaxTree.Root);
                     var result = e.Evaluate();
                     Console.WriteLine(result);
-                    Console.ForegroundColor = color;
+                    Console.ResetColor();
                 }
             }
         }
 
         static void PrettyPrint(SyntaxNode node, string indent = "", bool isLast = true)
         {
-            // path/to/folder/
-            // ├── a-first.html
-            // ├── b-second.txt
-            // ├── subfolder
-            // │   ├── readme.txt
-            // │   ├── code.cpp
-            // │   └── code.h
-            // └── z-last-file.txt
-
             var marker = isLast ? "└── " : "├── ";
 
             Console.Write(indent);
@@ -92,8 +82,6 @@ namespace Minsk
             Console.WriteLine();
 
             indent += isLast ? "    " : "│   ";
-
-            // indent += isLast ? "└── " : "├── ";
 
             var lastChild = node.GetChildren().LastOrDefault();
 

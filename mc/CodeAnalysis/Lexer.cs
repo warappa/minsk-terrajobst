@@ -2,11 +2,9 @@ using System.Collections.Generic;
 
 namespace Minsk.CodeAnalysis
 {
-    class Lexer
+    internal class Lexer
     {
         private List<string> diagnostics = new List<string>();
-
-
         private readonly string text;
         private int position;
         private char Current

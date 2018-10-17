@@ -2,7 +2,7 @@
 
 namespace Minsk.CodeAnalysis
 {
-    class Evaluator
+    public class Evaluator
     {
         private readonly ExpressionSyntax root;
 
