@@ -23,6 +23,9 @@ namespace Minsk.CodeAnalysis.Syntax
 
         // Keywords
         TrueKeyword,
-        FalseKeyword
+        FalseKeyword,
+        BangToken,
+        AmpersandAmpersandToken,
+        PipePipeToken
     }
 }

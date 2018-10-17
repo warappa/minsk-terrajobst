@@ -26,14 +26,16 @@ namespace Minsk.CodeAnalysis
             }
             if (root is BoundUnaryExpression unary)
             {
-                var operand = (int)EvaluateExpression(unary.Operand);
+                var operand = EvaluateExpression(unary.Operand);
 
                 switch (unary.OperatorKind)
                 {
                     case BoundUnaryOperatorKind.Identity:
-                        return operand;
+                        return (int)operand;
                     case BoundUnaryOperatorKind.Negation:
-                        return -operand;
+                        return -(int)operand;
+                    case BoundUnaryOperatorKind.LogicalNegation:
+                        return !(bool)operand;
                     default:
                         throw new Exception($"Unexpected unary operator {unary.OperatorKind}");
                 }
@@ -41,19 +43,23 @@ namespace Minsk.CodeAnalysis
 
             if (root is BoundBinaryExpression binary)
             {
-                var left = (int)EvaluateExpression(binary.Left);
-                var right = (int)EvaluateExpression(binary.Right);
+                var left = EvaluateExpression(binary.Left);
+                var right = EvaluateExpression(binary.Right);
 
                 switch (binary.OperatorKind)
                 {
                     case BoundBinaryOperatorKind.Addition:
-                        return left + right;
+                        return (int)left + (int)right;
                     case BoundBinaryOperatorKind.Substraction:
-                        return left - right;
+                        return (int)left - (int)right;
                     case BoundBinaryOperatorKind.Division:
-                        return left / right;
+                        return (int)left / (int)right;
                     case BoundBinaryOperatorKind.Multiplication:
-                        return left * right;
+                        return (int)left * (int)right;
+                    case BoundBinaryOperatorKind.LogicalAnd:
+                        return (bool)left && (bool)right;
+                    case BoundBinaryOperatorKind.LogicalOr:
+                        return (bool)left || (bool)right;
                     default:
                         throw new Exception($"Unexpected binary operator {binary.OperatorKind}");
                 }

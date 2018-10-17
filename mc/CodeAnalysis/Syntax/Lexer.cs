@@ -7,17 +7,18 @@ namespace Minsk.CodeAnalysis.Syntax
         private List<string> diagnostics = new List<string>();
         private readonly string text;
         private int position;
-        private char Current
-        {
-            get
-            {
-                if (position >= text.Length)
-                {
-                    return '\0';
-                }
+        private char Current => Peek(0);
+        private char Lookahead => Peek(1);
 
-                return text[position];
+        private char Peek(int offset = 0)
+        {
+            var index = position + offset;
+            if (index >= text.Length)
+            {
+                return '\0';
             }
+
+            return text[index];
         }
 
         public IEnumerable<string> Diagnostics => diagnostics;
@@ -101,6 +102,16 @@ namespace Minsk.CodeAnalysis.Syntax
                     return new SyntaxToken(SyntaxKind.OpenParenthesisToken, position++, "(", null);
                 case ')':
                     return new SyntaxToken(SyntaxKind.CloseParenthesisToken, position++, ")", null);
+                case '!':
+                    return new SyntaxToken(SyntaxKind.BangToken, position++, "!", null);
+                case '&':
+                    if (Lookahead == '&')
+                        return new SyntaxToken(SyntaxKind.AmpersandAmpersandToken, position += 2, "&&", null);
+                    break;
+                case '|':
+                    if (Lookahead == '|')
+                        return new SyntaxToken(SyntaxKind.PipePipeToken, position += 2, "||", null);
+                    break;
             }
 
             this.diagnostics.Add($"ERROR: bad character input: '{Current}'");
