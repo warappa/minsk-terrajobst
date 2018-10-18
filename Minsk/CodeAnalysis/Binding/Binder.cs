@@ -1,12 +1,20 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Minsk.CodeAnalysis.Syntax;
 
 namespace Minsk.CodeAnalysis.Binding
 {
     internal sealed class Binder
     {
-        private DiagnosticBag diagnostics = new DiagnosticBag();
+        private readonly DiagnosticBag diagnostics = new DiagnosticBag();
+        private readonly Dictionary<VariableSymbol, object> variables;
+
+        public Binder(Dictionary<VariableSymbol, object> variables)
+        {
+            this.variables = variables;
+        }
+
         public DiagnosticBag Diagnostics => diagnostics;
 
         public BoundExpression BindExpression(ExpressionSyntax syntax)
@@ -35,14 +43,36 @@ namespace Minsk.CodeAnalysis.Binding
             return BindExpression(syntax.Expression);
         }
 
-        private BoundExpression BindAssignmentExpression(AssignmentExpressionSyntax syntax)
-        {
-            throw new NotImplementedException();
-        }
-
         private BoundExpression BindNameExpression(NameExpressionSyntax syntax)
         {
-            throw new NotImplementedException();
+            var name = syntax.IdentifierToken.Text;
+
+            var variable = variables.Keys.FirstOrDefault(x => x.Name == name);
+
+            if (variable == null)
+            {
+                Diagnostics.ReportUndefinedName(syntax.IdentifierToken.Span, name);
+                return new BoundLiteralExpression(0);
+            }
+
+            return new BoundVariableExpression(variable);
+        }
+
+        private BoundExpression BindAssignmentExpression(AssignmentExpressionSyntax syntax)
+        {
+            var name = syntax.IdentifierToken.Text;
+            var boundExpression = BindExpression(syntax.Expression);
+
+            var existingVariable = variables.Keys.FirstOrDefault(x => x.Name == name);
+            if (existingVariable != null)
+            {
+                variables.Remove(existingVariable);
+            }
+
+            var variable = new VariableSymbol(name, boundExpression.Type);
+            variables[variable] = null;
+
+            return new BoundAssignmentExpression(variable, boundExpression);
         }
 
         private BoundExpression BindLiteralExpression(LiteralExpressionSyntax syntax)

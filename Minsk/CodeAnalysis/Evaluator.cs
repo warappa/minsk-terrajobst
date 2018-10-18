@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Minsk.CodeAnalysis.Binding;
 
 namespace Minsk.CodeAnalysis
@@ -7,10 +8,12 @@ namespace Minsk.CodeAnalysis
     internal sealed class Evaluator
     {
         private readonly BoundExpression root;
+        private readonly Dictionary<VariableSymbol, object> variables;
 
-        public Evaluator(BoundExpression root)
+        public Evaluator(BoundExpression root, Dictionary<VariableSymbol, object> variables)
         {
             this.root = root;
+            this.variables = variables;
         }
 
         public object Evaluate()
@@ -23,6 +26,16 @@ namespace Minsk.CodeAnalysis
             if (root is BoundLiteralExpression literal)
             {
                 return literal.Value;
+            }
+            if (root is BoundVariableExpression variable)
+            {
+                return variables[variable.Variable];
+            }
+            if (root is BoundAssignmentExpression assignment)
+            {
+                var value = EvaluateExpression(assignment.Expression);
+                variables[assignment.Variable] = value;
+                return value;
             }
             if (root is BoundUnaryExpression unary)
             {
