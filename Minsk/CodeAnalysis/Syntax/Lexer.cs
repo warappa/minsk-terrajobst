@@ -121,7 +121,10 @@ namespace Minsk.CodeAnalysis.Syntax
                         position += 2;
                         return new SyntaxToken(SyntaxKind.EqualsEqualsToken, start, "==", null);
                     }
-                    break;
+                    else
+                    {
+                        return new SyntaxToken(SyntaxKind.EqualsToken, position++, "=", null);
+                    }
                 case '!':
                     if (Lookahead == '=')
                     {

@@ -70,7 +70,25 @@ namespace Minsk.CodeAnalysis.Syntax
             return new SyntaxTree(diagnostics, expression, endOfFileToken);
         }
 
-        private ExpressionSyntax ParseExpression(int parentPrecedence = 0)
+        private ExpressionSyntax ParseExpression()
+        {
+            return ParseAssignmentExpression();
+        }
+
+        private ExpressionSyntax ParseAssignmentExpression()
+        {
+            if (Peek(0).Kind == SyntaxKind.IdentifierToken &&
+                Peek(1).Kind == SyntaxKind.EqualsEqualsToken)
+            {
+                var identifierToken = NextToken();
+                var operatorToken = NextToken();
+                var right = ParseAssignmentExpression();
+                return new AssignmentExpressionSyntax(identifierToken, operatorToken, right);
+            }
+            return ParseBinaryExpression();
+        }
+
+        private ExpressionSyntax ParseBinaryExpression(int parentPrecedence = 0)
         {
             ExpressionSyntax left;
 
@@ -78,7 +96,7 @@ namespace Minsk.CodeAnalysis.Syntax
             if (unaryOperatorPrecendence != 0 && unaryOperatorPrecendence >= parentPrecedence)
             {
                 var operatorToken = NextToken();
-                var operand = ParseExpression(unaryOperatorPrecendence);
+                var operand = ParseBinaryExpression(unaryOperatorPrecendence);
                 left = new UnaryExpressionSyntax(operatorToken, operand);
             }
             else
@@ -94,7 +112,7 @@ namespace Minsk.CodeAnalysis.Syntax
                 }
 
                 var operatorToken = NextToken();
-                var right = ParseExpression(precedence);
+                var right = ParseBinaryExpression(precedence);
                 left = new BinaryExpressionSyntax(left, operatorToken, right);
             }
 
@@ -121,6 +139,22 @@ namespace Minsk.CodeAnalysis.Syntax
                         var value = keywordToken.Kind == SyntaxKind.TrueKeyword;
                         return new LiteralExpressionSyntax(Current, value);
                     }
+
+                case SyntaxKind.IdentifierToken:
+                    {
+                        var identifierToken = NextToken();
+                        return new NameExpressionSyntax(identifierToken);
+                        // if (Current.Kind == SyntaxKind.EqualsToken)
+                        // {
+
+                        // }
+                        // else
+                        // {
+                        //     return new NameExpressionSyntax(identifierToken);
+                        // }
+                    }
+                    break;
+
                 default:
                     {
                         var numberToken = MatchToken(SyntaxKind.NumberToken);

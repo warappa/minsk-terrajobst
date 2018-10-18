@@ -14,20 +14,23 @@ namespace Minsk.CodeAnalysis.Syntax
         OpenParenthesisToken,
         CloseParenthesisToken,
         IdentifierToken,
+        EqualsEqualsToken,
+        EqualsToken,
+        BangToken,
+        AmpersandAmpersandToken,
+        PipePipeToken,
+        BangEqualsToken,
 
         // Expressions
         LiteralExpression,
         BinaryExpression,
         ParenthesizedExpression,
         UnaryExpression,
+        NameExpression,
+        AssignmentExpression,
 
         // Keywords
         TrueKeyword,
-        FalseKeyword,
-        BangToken,
-        AmpersandAmpersandToken,
-        PipePipeToken,
-        EqualsEqualsToken,
-        BangEqualsToken
+        FalseKeyword
     }
 }
