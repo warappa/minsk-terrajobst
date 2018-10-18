@@ -4,10 +4,10 @@ namespace Minsk.CodeAnalysis.Syntax
 {
     internal sealed class Parser
     {
-        private List<string> diagnostics = new List<string>();
+        private DiagnosticBag diagnostics = new DiagnosticBag();
         private readonly SyntaxToken[] tokens;
         private int position;
-        public IEnumerable<string> Diagnostics => diagnostics;
+        public DiagnosticBag Diagnostics => diagnostics;
 
         public Parser(string text)
         {
@@ -59,7 +59,7 @@ namespace Minsk.CodeAnalysis.Syntax
                 return NextToken();
             }
 
-            diagnostics.Add($"ERROR: Unexpected token <{Current.Kind}>, expected <{kind}>");
+            diagnostics.ReportUnexpectedToken(Current.Span, Current.Kind, kind);
             return new SyntaxToken(kind, Current.Position, null, null);
         }
 

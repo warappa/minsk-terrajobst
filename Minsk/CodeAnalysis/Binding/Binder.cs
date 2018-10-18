@@ -6,8 +6,8 @@ namespace Minsk.CodeAnalysis.Binding
 {
     internal sealed class Binder
     {
-        private List<string> diagnostics = new List<string>();
-        public IEnumerable<string> Diagnostics => diagnostics;
+        private DiagnosticBag diagnostics = new DiagnosticBag();
+        public DiagnosticBag Diagnostics => diagnostics;
 
         public BoundExpression BindExpression(ExpressionSyntax syntax)
         {
@@ -19,6 +19,8 @@ namespace Minsk.CodeAnalysis.Binding
                     return BindUnaryExpression((UnaryExpressionSyntax)syntax);
                 case SyntaxKind.BinaryExpression:
                     return BindBinaryExpression((BinaryExpressionSyntax)syntax);
+                case SyntaxKind.ParenthesizedExpression:
+                    return BindExpression(((ParenthesizedExpressionSyntax)syntax).Expression);
                 default:
                     throw new Exception($"Unexpected syntax {syntax.Kind}");
             }
@@ -37,7 +39,8 @@ namespace Minsk.CodeAnalysis.Binding
 
             if (boundOperator == null)
             {
-                diagnostics.Add($"Unary operator {syntax.OperatorToken.Text} is not defined for type {boundOperand.Type}");
+                diagnostics.ReportUndefinedUnaryOperator(syntax.OperatorToken.Span, syntax.OperatorToken.Text, boundOperand.Type);
+
                 return boundOperand;
             }
 
@@ -51,7 +54,8 @@ namespace Minsk.CodeAnalysis.Binding
             var boundOperator = BoundBinaryOperator.Bind(syntax.OperatorToken.Kind, boundLeft.Type, boundRight.Type);
             if (boundOperator == null)
             {
-                diagnostics.Add($"Binary operator {syntax.OperatorToken.Text} is not defined for type {boundLeft.Type} and {boundRight.Type}");
+                diagnostics.ReportUndefinedBinaryOperator(syntax.OperatorToken.Span, syntax.OperatorToken.Text, boundLeft.Type, boundRight.Type);
+
                 return boundLeft;
             }
 

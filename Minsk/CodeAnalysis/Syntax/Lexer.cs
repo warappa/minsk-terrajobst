@@ -4,7 +4,7 @@ namespace Minsk.CodeAnalysis.Syntax
 {
     internal class Lexer
     {
-        private List<string> diagnostics = new List<string>();
+        private DiagnosticBag diagnostics = new DiagnosticBag();
         private readonly string text;
         private int position;
         private char Current => Peek(0);
@@ -21,7 +21,7 @@ namespace Minsk.CodeAnalysis.Syntax
             return text[index];
         }
 
-        public IEnumerable<string> Diagnostics => diagnostics;
+        public DiagnosticBag Diagnostics => diagnostics;
 
         public Lexer(string text)
         {
@@ -38,6 +38,7 @@ namespace Minsk.CodeAnalysis.Syntax
             // <numbers>
             // + - * / ( )
             // <whitespace>
+            var start = position;
 
             if (position >= text.Length)
             {
@@ -45,7 +46,7 @@ namespace Minsk.CodeAnalysis.Syntax
             }
             else if (char.IsDigit(Current))
             {
-                var start = position;
+
                 while (char.IsDigit(Current))
                 {
                     Next();
@@ -56,13 +57,12 @@ namespace Minsk.CodeAnalysis.Syntax
 
                 if (!int.TryParse(t, out var value))
                 {
-                    diagnostics.Add($"The number {t} cannot be represented by an Int32.");
+                    diagnostics.ReportInvalidNumber(new TextSpan(position, length), t, typeof(int));
                 }
                 return new SyntaxToken(SyntaxKind.NumberToken, start, t, value);
             }
             else if (char.IsWhiteSpace(Current))
             {
-                var start = position;
                 while (char.IsWhiteSpace(Current))
                 {
                     Next();
@@ -76,7 +76,6 @@ namespace Minsk.CodeAnalysis.Syntax
 
             if (char.IsLetter(Current))
             {
-                var start = position;
                 while (char.IsLetter(Current))
                 {
                     Next();
@@ -104,25 +103,39 @@ namespace Minsk.CodeAnalysis.Syntax
                     return new SyntaxToken(SyntaxKind.CloseParenthesisToken, position++, ")", null);
                 case '&':
                     if (Lookahead == '&')
-                        return new SyntaxToken(SyntaxKind.AmpersandAmpersandToken, position += 2, "&&", null);
+                    {
+                        position += 2;
+                        return new SyntaxToken(SyntaxKind.AmpersandAmpersandToken, start, "&&", null);
+                    }
                     break;
                 case '|':
                     if (Lookahead == '|')
-                        return new SyntaxToken(SyntaxKind.PipePipeToken, position += 2, "||", null);
-                    break;
+                    {
+                        position += 2;
+                        return new SyntaxToken(SyntaxKind.PipePipeToken, start, "||", null);
+                    }
                     break;
                 case '=':
                     if (Lookahead == '=')
-                        return new SyntaxToken(SyntaxKind.EqualsEqualsToken, position += 2, "==", null);
+                    {
+                        position += 2;
+                        return new SyntaxToken(SyntaxKind.EqualsEqualsToken, start, "==", null);
+                    }
                     break;
                 case '!':
                     if (Lookahead == '=')
-                        return new SyntaxToken(SyntaxKind.BangEqualsToken, position += 2, "!=", null);
+                    {
+                        position += 2;
+                        return new SyntaxToken(SyntaxKind.BangEqualsToken, start, "!=", null);
+                    }
                     else
-                        return new SyntaxToken(SyntaxKind.BangToken, position++, "!", null);
+                    {
+                        position++;
+                        return new SyntaxToken(SyntaxKind.BangToken, start, "!", null);
+                    }
             }
 
-            this.diagnostics.Add($"ERROR: bad character input: '{Current}'");
+            this.diagnostics.ReportBadCharacter(position, Current);
             return new SyntaxToken(SyntaxKind.BadToken, position++, text.Substring(position - 1, 1), null);
         }
     }
