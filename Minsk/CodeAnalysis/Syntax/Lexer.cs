@@ -71,7 +71,7 @@ namespace Minsk.CodeAnalysis.Syntax
                 var length = position - start;
                 var t = text.Substring(start, length);
 
-                return new SyntaxToken(SyntaxKind.Whitespace, start, t, null);
+                return new SyntaxToken(SyntaxKind.WhitespaceToken, start, t, null);
             }
 
             if (char.IsLetter(Current))
