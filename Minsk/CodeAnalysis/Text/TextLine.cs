@@ -12,7 +12,7 @@ namespace Minsk.CodeAnalysis.Text
 
         public SourceText Text { get; }
         public int Start { get; }
-        public int End => Start + LengthIncludingLineBreak;
+        public int End => Start + Length;
         public int Length { get; }
         public int LengthIncludingLineBreak { get; }
         public TextSpan Span => new TextSpan(Start, Length);
