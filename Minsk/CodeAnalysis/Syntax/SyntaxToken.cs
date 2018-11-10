@@ -17,7 +17,7 @@ namespace Minsk.CodeAnalysis.Syntax
         public string Text { get; }
         public object Value { get; }
         public override SyntaxKind Kind { get; }
-        public TextSpan Span => new TextSpan(Position, Text.Length);
+        public override TextSpan Span => new TextSpan(Position, Text.Length);
 
         public override IEnumerable<SyntaxNode> GetChildren()
         {
