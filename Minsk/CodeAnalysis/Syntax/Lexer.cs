@@ -6,7 +6,7 @@ namespace Minsk.CodeAnalysis.Syntax
     internal class Lexer
     {
         private readonly DiagnosticBag diagnostics = new DiagnosticBag();
-        private readonly string text;
+        private readonly SourceText text;
         private int start;
         private int position;
         private SyntaxKind kind;
@@ -27,7 +27,7 @@ namespace Minsk.CodeAnalysis.Syntax
 
         public DiagnosticBag Diagnostics => diagnostics;
 
-        public Lexer(string text)
+        public Lexer(SourceText text)
         {
             this.text = text;
         }
@@ -118,7 +118,7 @@ namespace Minsk.CodeAnalysis.Syntax
                 case '7':
                 case '8':
                 case '9':
-                    ReadNumber();
+                    ReadNumberToken();
                     break;
                 case ' ':
                 case '\t':
@@ -150,7 +150,7 @@ namespace Minsk.CodeAnalysis.Syntax
 
             if (t == null)
             {
-                t = text.Substring(start, length);
+                t = text.ToString(start, length);
             }
             return new SyntaxToken(kind, start, t, value);
         }
@@ -165,7 +165,7 @@ namespace Minsk.CodeAnalysis.Syntax
             kind = SyntaxKind.WhitespaceToken;
         }
 
-        private void ReadNumber()
+        private void ReadNumberToken()
         {
             while (char.IsDigit(Current))
             {
@@ -173,7 +173,7 @@ namespace Minsk.CodeAnalysis.Syntax
             }
 
             var length = position - start;
-            var t = text.Substring(start, length);
+            var t = text.ToString(start, length);
             if (!int.TryParse(t, out int value))
             {
                 diagnostics.ReportInvalidNumber(new TextSpan(position, length), t, typeof(int));
@@ -191,7 +191,7 @@ namespace Minsk.CodeAnalysis.Syntax
             }
 
             var length = position - start;
-            var t = text.Substring(start, length);
+            var t = text.ToString(start, length);
             kind = SyntaxFacts.GetKeywordKind(t);
 
         }
