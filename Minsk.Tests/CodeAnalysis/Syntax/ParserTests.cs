@@ -2,7 +2,7 @@ using System.Collections.Generic;
 using Minsk.CodeAnalysis.Syntax;
 using Xunit;
 
-namespace Minsk.Tests.CodeAnalysis
+namespace Minsk.Tests.CodeAnalysis.Syntax
 {
     public class ParserTests
     {

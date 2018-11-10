@@ -4,7 +4,7 @@ using System.Linq;
 using Minsk.CodeAnalysis.Syntax;
 using Xunit;
 
-namespace Minsk.Tests.CodeAnalysis
+namespace Minsk.Tests.CodeAnalysis.Syntax
 {
     internal sealed class AssertingEnumerator : IDisposable
     {
