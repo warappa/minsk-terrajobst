@@ -144,17 +144,7 @@ namespace Minsk.CodeAnalysis.Syntax
                     {
                         var identifierToken = NextToken();
                         return new NameExpressionSyntax(identifierToken);
-                        // if (Current.Kind == SyntaxKind.EqualsToken)
-                        // {
-
-                        // }
-                        // else
-                        // {
-                        //     return new NameExpressionSyntax(identifierToken);
-                        // }
                     }
-                    break;
-
                 default:
                     {
                         var numberToken = MatchToken(SyntaxKind.NumberToken);
