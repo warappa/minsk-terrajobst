@@ -31,6 +31,9 @@ namespace Minsk.CodeAnalysis.Syntax
 
         // Keywords
         TrueKeyword,
-        FalseKeyword
+        FalseKeyword,
+
+        // Nodes
+        CompilationUnit
     }
 }
