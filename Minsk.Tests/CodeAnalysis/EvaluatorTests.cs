@@ -32,7 +32,7 @@ namespace Minsk.Tests.CodeAnalysis
         [InlineData("!true", false)]
         [InlineData("!false", true)]
 
-        [InlineData("(a = 10) * a", 100)]
+        [InlineData("{ var a = 0 (a = 10) * a }", 100)]
         public void Evaluator_Evaluate_returns_correct_values(string text, object expectedResult)
         {
             var syntaxTree = SyntaxTree.Parse(text);
