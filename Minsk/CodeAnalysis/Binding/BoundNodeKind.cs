@@ -4,6 +4,7 @@ namespace Minsk.CodeAnalysis.Binding
     {
         // Statements
         BlockStatement,
+        VariableDeclaration,
         ExpressionStatement,
 
         // Expressions
@@ -12,6 +13,5 @@ namespace Minsk.CodeAnalysis.Binding
         BinaryExpression,
         VariableExpression,
         AssignmentExpression,
-
     }
 }

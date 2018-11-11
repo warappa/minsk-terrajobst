@@ -25,6 +25,7 @@ namespace Minsk.CodeAnalysis.Syntax
 
         // Statements
         BlockStatement,
+        VariableDeclaration,
         ExpressionStatement,
 
         // Expressions
@@ -38,6 +39,8 @@ namespace Minsk.CodeAnalysis.Syntax
         // Keywords
         TrueKeyword,
         FalseKeyword,
+        VarKeyword,
+        LetKeyword,
 
         // Nodes
         CompilationUnit,

@@ -73,5 +73,11 @@ namespace Minsk.CodeAnalysis
             var message = $"Cannot convert type '{fromType}' to type {toType}.";
             Report(span, message);
         }
+
+        public void ReportCannotAssign(TextSpan span, string name)
+        {
+            var message = $"Variable '{name}' is readonly and cannot be assigned to.";
+            Report(span, message);
+        }
     }
 }
