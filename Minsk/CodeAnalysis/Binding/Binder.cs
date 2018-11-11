@@ -110,6 +110,7 @@ namespace Minsk.CodeAnalysis.Binding
             if (!scope.TryLookup(name, out var variable))
             {
                 variable = new VariableSymbol(name, boundExpression.Type);
+                scope.TryDeclare(variable);
             }
 
             if (boundExpression.Type != variable.Type)
