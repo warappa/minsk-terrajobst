@@ -13,6 +13,8 @@ namespace Minsk.CodeAnalysis.Syntax
         SlashToken,
         OpenParenthesisToken,
         CloseParenthesisToken,
+        OpenBraceToken,
+        CloseBraceToken,
         IdentifierToken,
         EqualsEqualsToken,
         EqualsToken,
@@ -20,6 +22,10 @@ namespace Minsk.CodeAnalysis.Syntax
         AmpersandAmpersandToken,
         PipePipeToken,
         BangEqualsToken,
+
+        // Statements
+        BlockStatement,
+        ExpressionStatement,
 
         // Expressions
         LiteralExpression,
@@ -34,6 +40,6 @@ namespace Minsk.CodeAnalysis.Syntax
         FalseKeyword,
 
         // Nodes
-        CompilationUnit
+        CompilationUnit,
     }
 }

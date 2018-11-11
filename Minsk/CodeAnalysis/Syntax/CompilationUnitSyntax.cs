@@ -4,20 +4,20 @@ namespace Minsk.CodeAnalysis.Syntax
 {
     public sealed class CompilationUnitSyntax : SyntaxNode
     {
-        public CompilationUnitSyntax(ExpressionSyntax expression, SyntaxToken endOfFileToken)
+        public CompilationUnitSyntax(StatementSyntax statement, SyntaxToken endOfFileToken)
         {
-            Expression = expression;
+            Statement = statement;
             EndOfFileToken = endOfFileToken;
         }
 
-        public ExpressionSyntax Expression { get; }
+        public StatementSyntax Statement { get; }
         public SyntaxToken EndOfFileToken { get; }
 
         public override SyntaxKind Kind => SyntaxKind.CompilationUnit;
 
         public override IEnumerable<SyntaxNode> GetChildren()
         {
-            yield return Expression;
+            yield return Statement;
             yield return EndOfFileToken;
         }
     }

@@ -133,8 +133,9 @@ namespace Minsk.Tests.CodeAnalysis.Syntax
         {
             var syntaxTree = SyntaxTree.Parse(text);
             var root = syntaxTree.Root;
+            var statement = root.Statement;
 
-            return root.Expression;
+            return Assert.IsType<ExpressionStatementSyntax>(statement).Expression;
         }
 
         public static IEnumerable<object[]> GetBinaryOperatorPairsData()
