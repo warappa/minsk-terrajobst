@@ -116,6 +116,30 @@ namespace Minsk.CodeAnalysis.Syntax
                         position++;
                     }
                     break;
+                case '<':
+                    position++;
+                    if (Current != '=')
+                    {
+                        kind = SyntaxKind.LessToken;
+                    }
+                    else
+                    {
+                        kind = SyntaxKind.LessOrEqualsToken;
+                        position++;
+                    }
+                    break;
+                case '>':
+                    position++;
+                    if (Current != '=')
+                    {
+                        kind = SyntaxKind.GreaterToken;
+                    }
+                    else
+                    {
+                        kind = SyntaxKind.GreaterOrEqualsToken;
+                        position++;
+                    }
+                    break;
                 case '0':
                 case '1':
                 case '2':

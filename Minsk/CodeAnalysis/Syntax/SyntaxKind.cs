@@ -22,6 +22,10 @@ namespace Minsk.CodeAnalysis.Syntax
         AmpersandAmpersandToken,
         PipePipeToken,
         BangEqualsToken,
+        LessToken,
+        LessOrEqualsToken,
+        GreaterToken,
+        GreaterOrEqualsToken,
 
         // Statements
         BlockStatement,
