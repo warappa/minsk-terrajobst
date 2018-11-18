@@ -137,7 +137,6 @@ namespace Minsk.CodeAnalysis.Syntax
                 default:
                     if (char.IsLetter(Current))
                     {
-                        ;
                         ReadIdentifierOrKeyword();
                     }
                     else if (char.IsWhiteSpace(Current))

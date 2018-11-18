@@ -209,7 +209,7 @@ namespace Minsk.CodeAnalysis.Syntax
         {
             var isTrue = Current.Kind == SyntaxKind.TrueKeyword;
             var keywordToken = isTrue ? MatchToken(SyntaxKind.TrueKeyword) : MatchToken(SyntaxKind.FalseKeyword);
-            return new LiteralExpressionSyntax(Current, isTrue);
+            return new LiteralExpressionSyntax(keywordToken, isTrue);
         }
 
         private ExpressionSyntax ParseNumberLiteral()
