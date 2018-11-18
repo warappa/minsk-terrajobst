@@ -89,6 +89,8 @@ namespace Minsk.CodeAnalysis.Syntax
                     return ParseIfStatement();
                 case SyntaxKind.WhileKeyword:
                     return ParseWhileStatement();
+                case SyntaxKind.ForKeyword:
+                    return ParseForStatement();
                 default:
                     return ParseExpressionStatement();
             }
@@ -115,6 +117,15 @@ namespace Minsk.CodeAnalysis.Syntax
             return new IfStatementSyntax(keyword, condition, statement, elseClause);
         }
 
+        private ElseClauseSyntax ParseElseClause()
+        {
+            if (Current.Kind != SyntaxKind.ElseKeyword)
+                return null;
+            var keyword = NextToken();
+            var statement = ParseStatement();
+            return new ElseClauseSyntax(keyword, statement);
+        }
+
         private StatementSyntax ParseWhileStatement()
         {
             var keyword = MatchToken(SyntaxKind.WhileKeyword);
@@ -123,13 +134,16 @@ namespace Minsk.CodeAnalysis.Syntax
             return new WhileStatementSyntax(keyword, condition, body);
         }
 
-        private ElseClauseSyntax ParseElseClause()
+        private StatementSyntax ParseForStatement()
         {
-            if (Current.Kind != SyntaxKind.ElseKeyword)
-                return null;
-            var keyword = NextToken();
-            var statement = ParseStatement();
-            return new ElseClauseSyntax(keyword, statement);
+            var keyword = MatchToken(SyntaxKind.ForKeyword);
+            var identifier = MatchToken(SyntaxKind.IdentifierToken);
+            var equalsToken = MatchToken(SyntaxKind.EqualsToken);
+            var lowerBound = ParseExpression();
+            var toKeyword = MatchToken(SyntaxKind.ToKeyword);
+            var upperBound = ParseExpression();
+            var body = ParseStatement();
+            return new ForStatementSyntax(keyword, identifier, equalsToken, lowerBound, toKeyword, upperBound, body);
         }
 
         private StatementSyntax ParseBlockStatement()
