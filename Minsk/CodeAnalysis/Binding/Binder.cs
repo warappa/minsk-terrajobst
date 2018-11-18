@@ -73,6 +73,8 @@ namespace Minsk.CodeAnalysis.Binding
                     return BindExpressionStatement((ExpressionStatementSyntax)syntax);
                 case SyntaxKind.VariableDeclaration:
                     return BindVariableDeclaration((VariableDeclarationSyntax)syntax);
+                case SyntaxKind.IfStatement:
+                    return BindIfStatement((IfStatementSyntax)syntax);
                 default:
                     throw new Exception($"Unexpected syntax {syntax.Kind}");
             }
@@ -91,6 +93,14 @@ namespace Minsk.CodeAnalysis.Binding
             }
 
             return new BoundVariableDeclaration(variable, initializer);
+        }
+
+        private BoundStatement BindIfStatement(IfStatementSyntax syntax)
+        {
+            var condition = BindExpression(syntax.Condition, typeof(bool));
+            var thenStatement = BindStatement(syntax.ThenStatement);
+            var elseStatement = syntax.ElseClause == null ? null : BindStatement(syntax.ElseClause.ElseStatement);
+            return new BoundIfStatement(condition, thenStatement, elseStatement);
         }
 
         private BoundStatement BindBlockStatement(BlockStatementSyntax syntax)
@@ -114,6 +124,17 @@ namespace Minsk.CodeAnalysis.Binding
             var expression = BindExpression(syntax.Expression);
 
             return new BoundExpressionStatement(expression);
+        }
+
+        private BoundExpression BindExpression(ExpressionSyntax syntax, Type targetType)
+        {
+            var result = BindExpression(syntax);
+            if (result.Type != targetType)
+            {
+                diagnostics.ReportCannotConvert(syntax.Span, result.Type, targetType);
+            }
+
+            return result;
         }
 
         private BoundExpression BindExpression(ExpressionSyntax syntax)

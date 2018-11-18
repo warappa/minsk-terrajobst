@@ -42,6 +42,11 @@ namespace Minsk.Tests.CodeAnalysis
         [InlineData("!false", true)]
 
         [InlineData("{ var a = 0 (a = 10) * a }", 100)]
+
+        [InlineData("{ var a = 0 if a == 0 a = 10 a }", 10)]
+        [InlineData("{ var a = 0 if a == 4 a = 10 a }", 0)]
+        [InlineData("{ var a = 0 if a == 0 a = 10 else a = 5 a }", 10)]
+        [InlineData("{ var a = 0 if a == 4 a = 10 else a = 5 a }", 5)]
         public void Evaluator_Evaluate_returns_correct_values(string text, object expectedResult)
         {
             AssertValue(text, expectedResult);
@@ -111,6 +116,23 @@ namespace Minsk.Tests.CodeAnalysis
             ";
             AssertDiagnostics(text, diagnostics);
         }
+
+        [Fact]
+        public void Evaluator_IfStatement_Reports_CannotConvert()
+        {
+            var text = @"
+                {
+                    var x = 0
+                    if [10]
+                        x = 10
+                }
+            ";
+            var diagnostics = @"
+                Cannot convert type 'System.Int32' to 'System.Boolean'.
+            ";
+            AssertDiagnostics(text, diagnostics);
+        }
+
         [Fact]
         public void Evaluator_Unary_Reports_Undefined()
         {

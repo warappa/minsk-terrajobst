@@ -55,6 +55,10 @@ namespace Minsk.CodeAnalysis.Syntax
                     return SyntaxKind.LetKeyword;
                 case "var":
                     return SyntaxKind.VarKeyword;
+                case "if":
+                    return SyntaxKind.IfKeyword;
+                case "else":
+                    return SyntaxKind.ElseKeyword;
                 default:
                     return SyntaxKind.IdentifierToken;
             }
@@ -132,6 +136,10 @@ namespace Minsk.CodeAnalysis.Syntax
                     return "let";
                 case SyntaxKind.VarKeyword:
                     return "var";
+                case SyntaxKind.IfKeyword:
+                    return "if";
+                case SyntaxKind.ElseKeyword:
+                    return "else";
                 default:
                     return null;
             }
