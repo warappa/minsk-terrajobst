@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 namespace Minsk.CodeAnalysis.Syntax
 {
     public enum SyntaxKind
@@ -31,6 +33,7 @@ namespace Minsk.CodeAnalysis.Syntax
         BlockStatement,
         VariableDeclaration,
         IfStatement,
+        WhileStatement,
         ExpressionStatement,
 
         // Expressions
@@ -47,10 +50,31 @@ namespace Minsk.CodeAnalysis.Syntax
         TrueKeyword,
         FalseKeyword,
         VarKeyword,
+        WhileKeyword,
         LetKeyword,
 
         // Nodes
         CompilationUnit,
         ElseClause,
+    }
+    public sealed class WhileStatementSyntax : StatementSyntax
+    {
+        public WhileStatementSyntax(SyntaxToken whileKeyword, ExpressionSyntax condition, StatementSyntax body)
+        {
+            WhileKeyword = whileKeyword;
+            Condition = condition;
+            Body = body;
+        }
+        public override SyntaxKind Kind => SyntaxKind.WhileStatement;
+        public SyntaxToken WhileKeyword { get; }
+        public ExpressionSyntax Condition { get; }
+        public StatementSyntax Body { get; }
+
+        public override IEnumerable<SyntaxNode> GetChildren()
+        {
+            yield return WhileKeyword;
+            yield return Condition;
+            yield return Body;
+        }
     }
 }
