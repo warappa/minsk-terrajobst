@@ -8,6 +8,9 @@ namespace Minsk.CodeAnalysis.Binding
         IfStatement,
         WhileStatement,
         ForStatement,
+        GotoStatement,
+        ConditionalGotoStatement,
+        LabelStatement,
         ExpressionStatement,
 
         // Expressions

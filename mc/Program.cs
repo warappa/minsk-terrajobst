@@ -80,8 +80,6 @@ namespace Minsk
 
                 var compilation = previous == null ? new Compilation(syntaxTree) : previous.ContinueWith(syntaxTree);
 
-                var result = compilation.Evaluate(variables);
-
                 if (showTree)
                 {
                     syntaxTree.Root.WriteTo(Console.Out);
@@ -91,6 +89,8 @@ namespace Minsk
                 {
                     compilation.EmitTree(Console.Out);
                 }
+
+                var result = compilation.Evaluate(variables);
 
                 if (!result.Diagnostics.Any())
                 {
