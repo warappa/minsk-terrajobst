@@ -73,7 +73,7 @@ namespace Minsk.CodeAnalysis.Lowering
             var gotoCheck = new BoundGotoStatement(checkLabel);
             var continueLabelStatement = new BoundLabelStatement(continueLabel);
             var checkLabelStatement = new BoundLabelStatement(checkLabel);
-            var gotoTrue = new BoundConditionalGotoStatement(continueLabel, node.Condition, false);
+            var gotoTrue = new BoundConditionalGotoStatement(continueLabel, node.Condition, true);
             var endLabelStatement = new BoundLabelStatement(endLabel);
 
             var result = new BoundBlockStatement(ImmutableArray.Create<BoundStatement>(
@@ -100,7 +100,7 @@ namespace Minsk.CodeAnalysis.Lowering
                 // <then>
                 // end:
                 var endLabel = GenerateLabel();
-                var gotoFalse = new BoundConditionalGotoStatement(endLabel, node.Condition, true);
+                var gotoFalse = new BoundConditionalGotoStatement(endLabel, node.Condition, false);
                 var endLabelStatement = new BoundLabelStatement(endLabel);
                 var result = new BoundBlockStatement(ImmutableArray.Create<BoundStatement>(
                     gotoFalse,
@@ -126,7 +126,7 @@ namespace Minsk.CodeAnalysis.Lowering
                 // end:
                 var elseLabel = GenerateLabel();
                 var endLabel = GenerateLabel();
-                var gotoFalse = new BoundConditionalGotoStatement(elseLabel, node.Condition, true);
+                var gotoFalse = new BoundConditionalGotoStatement(elseLabel, node.Condition, false);
                 var gotoEndStatement = new BoundGotoStatement(endLabel);
                 var elseLabelStatement = new BoundLabelStatement(elseLabel);
                 var endLabelStatement = new BoundLabelStatement(endLabel);
@@ -150,7 +150,8 @@ namespace Minsk.CodeAnalysis.Lowering
             //
             // {
             //   var <var> = <lower>
-            //   while (<var> <= <upper>)
+            //   var upperBound = <lower>
+            //   while (<var> <= upperBound)
             //   {
             //      <body>
             //      <var> = <var> + 1
@@ -158,18 +159,20 @@ namespace Minsk.CodeAnalysis.Lowering
             // }
 
             var variableDeclaration = new BoundVariableDeclaration(node.Variable, node.LowerBound);
-            var boundVariableExpression = new BoundVariableExpression(node.Variable);
+            var variableExpression = new BoundVariableExpression(node.Variable);
+            var upperBoundSymbol = new VariableSymbol("upperBound", true, typeof(int));
+            var upperBoundDeclaration = new BoundVariableDeclaration(upperBoundSymbol, node.UpperBound);
 
             var condition = new BoundBinaryExpression(
-                boundVariableExpression,
+                variableExpression,
                 BoundBinaryOperator.Bind(SyntaxKind.LessOrEqualsToken, typeof(int), typeof(int)),
-                node.UpperBound);
+                new BoundVariableExpression(upperBoundSymbol));
 
             var increment = new BoundExpressionStatement(
             new BoundAssignmentExpression(
                 node.Variable,
                 new BoundBinaryExpression(
-                    boundVariableExpression,
+                    variableExpression,
                     BoundBinaryOperator.Bind(SyntaxKind.PlusToken, typeof(int), typeof(int)),
                     new BoundLiteralExpression(1)
                 )
@@ -179,7 +182,11 @@ namespace Minsk.CodeAnalysis.Lowering
 
             var whileStatement = new BoundWhileStatement(condition, whileBlock);
 
-            var result = new BoundBlockStatement(ImmutableArray.Create<BoundStatement>(variableDeclaration, whileStatement));
+            var result = new BoundBlockStatement(ImmutableArray.Create<BoundStatement>(
+                variableDeclaration,
+                upperBoundDeclaration,
+                whileStatement
+                ));
 
             return RewriteStatement(result);
         }

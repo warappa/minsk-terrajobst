@@ -15,18 +15,18 @@ namespace Minsk.CodeAnalysis.Binding
 
     internal sealed class BoundConditionalGotoStatement : BoundStatement
     {
-        public BoundConditionalGotoStatement(LabelSymbol label, BoundExpression condition, bool jumpIfFalse = false)
+        public BoundConditionalGotoStatement(LabelSymbol label, BoundExpression condition, bool jumpIfTrue = false)
         {
             Label = label;
             Condition = condition;
-            JumpIfFalse = jumpIfFalse;
+            JumpIfTrue = jumpIfTrue;
         }
 
         public override BoundNodeKind Kind => BoundNodeKind.ConditionalGotoStatement;
 
         public LabelSymbol Label { get; }
         public BoundExpression Condition { get; }
-        public bool JumpIfFalse { get; }
+        public bool JumpIfTrue { get; }
     }
 
     internal sealed class BoundLabelStatement : BoundStatement
