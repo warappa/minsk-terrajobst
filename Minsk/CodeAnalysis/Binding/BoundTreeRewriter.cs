@@ -78,7 +78,7 @@ namespace Minsk.CodeAnalysis.Binding
         {
             var condition = RewriteExpression(node.Condition);
             var thenStatement = RewriteStatement(node.ThenStatement);
-            var elseStatement = RewriteStatement(node.ElseStatement);
+            var elseStatement = node.ElseStatement == null ? null : RewriteStatement(node.ElseStatement);
 
             if (condition == node.Condition &&
                 thenStatement == node.ThenStatement &&
