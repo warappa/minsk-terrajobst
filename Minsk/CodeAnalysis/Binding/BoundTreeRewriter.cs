@@ -33,6 +33,11 @@ namespace Minsk.CodeAnalysis.Binding
             }
         }
 
+        protected virtual BoundExpression RewriteErrorExpression(BoundErrorExpression node)
+        {
+            return node;
+        }
+
         protected virtual BoundStatement RewriteBlockStatement(BoundBlockStatement node)
         {
             ImmutableArray<BoundStatement>.Builder builder = null;
@@ -159,7 +164,8 @@ namespace Minsk.CodeAnalysis.Binding
         {
             switch (node.Kind)
             {
-
+                case BoundNodeKind.ErrorExpression:
+                    return RewriteErrorExpression((BoundErrorExpression)node);
                 case BoundNodeKind.LiteralExpression:
                     return RewriteLiteralExpression((BoundLiteralExpression)node);
                 case BoundNodeKind.VariableExpression:
