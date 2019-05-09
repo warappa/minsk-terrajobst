@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Text;
 using Minsk.CodeAnalysis.Text;
 
 namespace Minsk.CodeAnalysis.Syntax
@@ -158,6 +159,9 @@ namespace Minsk.CodeAnalysis.Syntax
                         position++;
                     }
                     break;
+                case '"':
+                    ReadString();
+                    break;
                 case '0':
                 case '1':
                 case '2':
@@ -202,6 +206,48 @@ namespace Minsk.CodeAnalysis.Syntax
                 t = text.ToString(start, length);
             }
             return new SyntaxToken(kind, start, t, value);
+        }
+
+        private void ReadString()
+        {
+            // Skip the current quote
+            position++;
+
+            var sb = new StringBuilder();
+            var done = false;
+
+            while (!done)
+            {
+                switch (Current)
+                {
+                    case '\0':
+                    case '\r':
+                    case '\n':
+                        var span = new TextSpan(start, 1);
+                        diagnostics.ReportUnterminatedString(span);
+                        done = true;
+                        break;
+                    case '"':
+                        if (Lookahead == '"')
+                        {
+                            sb.Append(Current);
+                            position += 2;
+                        }
+                        else
+                        {
+                            position++;
+                            done = true;
+                        }
+                        break;
+                    default:
+                        sb.Append(Current);
+                        position++;
+                        break;
+                }
+            }
+
+            kind = SyntaxKind.StringToken;
+            value = sb.ToString();
         }
 
         private void ReadWhitespace()

@@ -9,6 +9,7 @@ namespace Minsk.CodeAnalysis.Syntax
         EndOfFileToken,
         WhitespaceToken,
         NumberToken,
+        StringToken,
         PlusToken,
         MinusToken,
         StarToken,
