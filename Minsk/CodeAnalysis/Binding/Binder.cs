@@ -45,7 +45,7 @@ namespace Minsk.CodeAnalysis.Binding
                 previous = previous.Previous;
             }
 
-            BoundScope parent = null;
+            var parent = CreateRootScope();
 
             while (stack.Count > 0)
             {
@@ -53,13 +53,25 @@ namespace Minsk.CodeAnalysis.Binding
                 var scope = new BoundScope(parent);
                 foreach (var v in previous.Variables)
                 {
-                    scope.TryDeclare(v);
+                    scope.TryDeclareVariable(v);
                 }
 
                 parent = scope;
             }
 
             return parent;
+        }
+
+        private static BoundScope CreateRootScope()
+        {
+            var result = new BoundScope(null);
+
+            foreach (var f in BuiltinFunctions.GetAll())
+            {
+                result.TryDeclareFunction(f);
+            }
+
+            return result;
         }
 
         public DiagnosticBag Diagnostics => diagnostics;
@@ -202,10 +214,7 @@ namespace Minsk.CodeAnalysis.Binding
                 boundArguments.Add(boundArgument);
             }
 
-            var functions = BuiltinFunctions.GetAll();
-
-            var function = functions.SingleOrDefault(f => f.Name == syntax.Identifier.Text);
-            if (function is null)
+            if (!scope.TryLookupFunction(syntax.Identifier.Text, out var function))
             {
                 diagnostics.ReportUndefinedFunction(syntax.Identifier.Span, syntax.Identifier.Text);
                 return new BoundErrorExpression();
@@ -220,11 +229,11 @@ namespace Minsk.CodeAnalysis.Binding
             for (var i = 0; i < syntax.Arguments.Count; i++)
             {
                 var argument = boundArguments[i];
-                var Parameter = function.Parameter[i];
+                var parameter = function.Parameter[i];
 
-                if (argument.Type != Parameter.Type)
+                if (argument.Type != parameter.Type)
                 {
-                    diagnostics.ReportWrongArgumentType(syntax.Span, Parameter.Name, Parameter.Type, argument.Type);
+                    diagnostics.ReportWrongArgumentType(syntax.Span, parameter.Name, parameter.Type, argument.Type);
                     return new BoundErrorExpression();
                 }
             }
@@ -247,7 +256,7 @@ namespace Minsk.CodeAnalysis.Binding
                 return new BoundErrorExpression();
             }
 
-            if (!scope.TryLookup(name, out var variable))
+            if (!scope.TryLookupVariable(name, out var variable))
             {
                 Diagnostics.ReportUndefinedName(syntax.IdentifierToken.Span, name);
                 return new BoundErrorExpression();
@@ -261,7 +270,7 @@ namespace Minsk.CodeAnalysis.Binding
             var name = syntax.IdentifierToken.Text;
             var boundExpression = BindExpression(syntax.Expression);
 
-            if (!scope.TryLookup(name, out var variable))
+            if (!scope.TryLookupVariable(name, out var variable))
             {
                 Diagnostics.ReportUndefinedName(syntax.IdentifierToken.Span, name);
                 return boundExpression;
@@ -323,7 +332,7 @@ namespace Minsk.CodeAnalysis.Binding
             var declare = !identifier.IsMissing;
             var variable = new VariableSymbol(name, isReadOnly, type);
 
-            if (declare && !scope.TryDeclare(variable))
+            if (declare && !scope.TryDeclareVariable(variable))
             {
                 diagnostics.ReportVariableAlreadyDeclared(identifier.Span, name);
             }

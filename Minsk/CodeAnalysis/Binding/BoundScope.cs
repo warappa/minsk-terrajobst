@@ -6,7 +6,8 @@ namespace Minsk.CodeAnalysis.Binding
 {
     internal sealed class BoundScope
     {
-        private Dictionary<string, VariableSymbol> variables = new Dictionary<string, VariableSymbol>();
+        private Dictionary<string, VariableSymbol> variables = null;
+        private Dictionary<string, FunctionSymbol> functions = null;
         public BoundScope Parent { get; }
 
         public BoundScope(BoundScope parent)
@@ -14,8 +15,13 @@ namespace Minsk.CodeAnalysis.Binding
             Parent = parent;
         }
 
-        public bool TryDeclare(VariableSymbol variable)
+        public bool TryDeclareVariable(VariableSymbol variable)
         {
+            if (variables is null)
+            {
+                variables = new Dictionary<string, VariableSymbol>();
+            }
+
             if (variables.ContainsKey(variable.Name))
             {
                 return false;
@@ -25,10 +31,28 @@ namespace Minsk.CodeAnalysis.Binding
 
             return true;
         }
-
-        public bool TryLookup(string name, out VariableSymbol variable)
+        public bool TryDeclareFunction(FunctionSymbol function)
         {
-            if (variables.TryGetValue(name, out variable))
+            if (functions is null)
+            {
+                functions = new Dictionary<string, FunctionSymbol>();
+            }
+
+            if (functions.ContainsKey(function.Name))
+            {
+                return false;
+            }
+
+            functions.Add(function.Name, function);
+
+            return true;
+        }
+
+        public bool TryLookupVariable(string name, out VariableSymbol variable)
+        {
+            variable = null;
+
+            if (variables?.TryGetValue(name, out variable) == true)
             {
                 return true;
             }
@@ -38,12 +62,33 @@ namespace Minsk.CodeAnalysis.Binding
                 return false;
             }
 
-            return Parent.TryLookup(name, out variable);
+            return Parent.TryLookupVariable(name, out variable);
+        }
+
+        public bool TryLookupFunction(string name, out FunctionSymbol function)
+        {
+            function = null;
+
+            if (functions?.TryGetValue(name, out function) == true)
+            {
+                return true;
+            }
+
+            if (Parent == null)
+            {
+                return false;
+            }
+
+            return Parent.TryLookupFunction(name, out function);
         }
 
         public ImmutableArray<VariableSymbol> GetDeclaredVariables()
         {
-            return variables.Values.ToImmutableArray();
+            return variables?.Values.ToImmutableArray() ?? ImmutableArray<VariableSymbol>.Empty;
+        }
+        public ImmutableArray<FunctionSymbol> GetDeclaredFunctions()
+        {
+            return functions?.Values.ToImmutableArray() ?? ImmutableArray<FunctionSymbol>.Empty;
         }
     }
 }
