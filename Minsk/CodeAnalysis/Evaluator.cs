@@ -174,7 +174,10 @@ namespace Minsk.CodeAnalysis
             switch (binary.Op.Kind)
             {
                 case BoundBinaryOperatorKind.Addition:
-                    return (int)left + (int)right;
+                    if (binary.Type == TypeSymbol.Int)
+                        return (int)left + (int)right;
+                    else
+                        return (string)left + (string)right;
                 case BoundBinaryOperatorKind.Substraction:
                     return (int)left - (int)right;
                 case BoundBinaryOperatorKind.Division:
