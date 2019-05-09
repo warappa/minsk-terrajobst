@@ -181,7 +181,7 @@ namespace Minsk.CodeAnalysis
                     return (int)left / (int)right;
 
                 case BoundBinaryOperatorKind.BitwiseAnd:
-                    if (binary.Type == typeof(int))
+                    if (binary.Type == TypeSymbol.Int)
                     {
                         return (int)left & (int)right;
                     }
@@ -190,7 +190,7 @@ namespace Minsk.CodeAnalysis
                         return (bool)left & (bool)right;
                     }
                 case BoundBinaryOperatorKind.BitwiseOr:
-                    if (binary.Type == typeof(int))
+                    if (binary.Type == TypeSymbol.Int)
                     {
                         return (int)left | (int)right;
                     }
@@ -199,7 +199,7 @@ namespace Minsk.CodeAnalysis
                         return (bool)left | (bool)right;
                     }
                 case BoundBinaryOperatorKind.BitwiseXor:
-                    if (binary.Type == typeof(int))
+                    if (binary.Type == TypeSymbol.Int)
                     {
                         return (int)left ^ (int)right;
                     }
