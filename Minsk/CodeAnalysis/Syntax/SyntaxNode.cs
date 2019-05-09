@@ -22,6 +22,15 @@ namespace Minsk.CodeAnalysis.Syntax
 
         public abstract IEnumerable<SyntaxNode> GetChildren();
 
+        public SyntaxToken GetLastToken()
+        {
+            if (this is SyntaxToken token)
+                return token;
+
+            // A syntax node should always contain at least 1 token.
+            return GetChildren().Last().GetLastToken();
+        }
+
         public void WriteTo(TextWriter writer)
         {
             PrettyPrint(writer, this);
