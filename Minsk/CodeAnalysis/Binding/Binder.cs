@@ -206,6 +206,11 @@ namespace Minsk.CodeAnalysis.Binding
 
         private BoundExpression BindCallExpression(CallExpressionSyntax syntax)
         {
+            if (syntax.Arguments.Count == 1 && LookupType(syntax.Identifier.Text) is TypeSymbol type)
+            {
+                return BindConversion(type, syntax.Arguments[0]);
+            }
+
             var boundArguments = ImmutableArray.CreateBuilder<BoundExpression>();
 
             foreach (var argument in syntax.Arguments)
@@ -239,6 +244,19 @@ namespace Minsk.CodeAnalysis.Binding
             }
 
             return new BoundCallExpression(function, boundArguments.ToImmutable());
+        }
+
+        private BoundExpression BindConversion(TypeSymbol type, ExpressionSyntax syntax)
+        {
+            var expression = BindExpression(syntax);
+            var conversion = Conversion.Classify(expression.Type, type);
+            if (!conversion.Exists)
+            {
+                diagnostics.ReportCannotConvert(syntax.Span, expression.Type, type);
+                return new BoundErrorExpression();
+            }
+
+            return new BoundConversionExpression(type, expression);
         }
 
         private BoundExpression BindParenthesizedExpression(ParenthesizedExpressionSyntax syntax)
@@ -350,6 +368,21 @@ namespace Minsk.CodeAnalysis.Binding
             }
 
             return variable;
+        }
+
+        private TypeSymbol LookupType(string name)
+        {
+            switch (name)
+            {
+                case "bool":
+                    return TypeSymbol.Bool;
+                case "int":
+                    return TypeSymbol.Int;
+                case "string":
+                    return TypeSymbol.String;
+                default:
+                    return null;
+            }
         }
     }
 }

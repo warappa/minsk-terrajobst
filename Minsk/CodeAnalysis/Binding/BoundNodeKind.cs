@@ -21,5 +21,6 @@ namespace Minsk.CodeAnalysis.Binding
         BinaryExpression,
         VariableExpression,
         AssignmentExpression,
+        ConversionExpression,
     }
 }
