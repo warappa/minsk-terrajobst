@@ -156,6 +156,8 @@ namespace Minsk.CodeAnalysis.Syntax
                     return "var";
                 case SyntaxKind.IfKeyword:
                     return "if";
+                case SyntaxKind.CommaToken:
+                    return ",";
                 case SyntaxKind.ElseKeyword:
                     return "else";
                 case SyntaxKind.WhileKeyword:

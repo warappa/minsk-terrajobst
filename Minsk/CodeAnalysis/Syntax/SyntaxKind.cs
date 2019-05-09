@@ -21,6 +21,7 @@ namespace Minsk.CodeAnalysis.Syntax
         IdentifierToken,
         EqualsEqualsToken,
         EqualsToken,
+        CommaToken,
         TildeToken,
         AmpersandToken,
         PipeToken,
@@ -43,6 +44,7 @@ namespace Minsk.CodeAnalysis.Syntax
         ExpressionStatement,
 
         // Expressions
+        CallExpression,
         LiteralExpression,
         BinaryExpression,
         ParenthesizedExpression,

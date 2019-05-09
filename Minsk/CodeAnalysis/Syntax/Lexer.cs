@@ -79,6 +79,10 @@ namespace Minsk.CodeAnalysis.Syntax
                     kind = SyntaxKind.CloseBraceToken;
                     position++;
                     break;
+                case ',':
+                    kind = SyntaxKind.CommaToken;
+                    position++;
+                    break;
                 case '~':
                     kind = SyntaxKind.TildeToken;
                     position++;
