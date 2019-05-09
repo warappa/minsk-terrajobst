@@ -10,6 +10,7 @@ namespace Minsk.CodeAnalysis
     {
         private readonly BoundBlockStatement root;
         private readonly Dictionary<VariableSymbol, object> variables;
+        private Random random;
 
         private object lastValue;
 
@@ -144,6 +145,13 @@ namespace Minsk.CodeAnalysis
                 Console.WriteLine(message);
 
                 return null;
+            }
+            else if (node.Function == BuiltinFunctions.Random)
+            {
+                var max = (int)EvaluateExpression(node.Arguments[0]);
+                random = random ?? new Random();
+
+                return random.Next(max);
             }
             else
             {
